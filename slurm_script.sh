@@ -7,10 +7,11 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=dipti.sengupta@students.uni-freiburg.de
 
-cd $(ws_find lth_ws)/Network_Trimming_Pytorch
+cd $(ws_find lth_ws)
 #python3 -m venv lth_env
 source lth_env/bin/activate
 pip list
+cd Network_Trimming_Pytorch
 
 python3 -c "import torch; print(torch.__version__)"
 python3 -c "import torch; print(torch.cuda.is_available())"
@@ -21,4 +22,4 @@ python3 -m train_vgg16_cifar10 --epoch 30
 
 # echo "Prune VGG16"
 
-conda deactivate
+deactivate
