@@ -3,6 +3,7 @@ import torch.nn as nn
 from vgg import feature_cfgs, classifier_cfgs
 from helper import valid
 
+
 class APoZ:
     def __init__(self, model):
         self.model = model
@@ -11,7 +12,7 @@ class APoZ:
         self.apoz = []
 
         for c in feature_cfgs + classifier_cfgs:
-            if c is 'M':
+            if c == 'M':
                 continue
 
             self.apoz.append([0] * c)

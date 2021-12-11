@@ -10,6 +10,7 @@ from vgg import vgg16
 from apoz import APoZ
 from helper import save_pkl, load_pkl, valid
 from converter import conv_post_mask, linear_mask, linear_pre_mask
+from torchsummary import summary
 
 parser = argparse.ArgumentParser(description='Network Trimming')
 parser.add_argument('--data_path', type=str, default='/home/ubuntu/datasets/imagenet',
@@ -63,7 +64,8 @@ criterion = nn.CrossEntropyLoss().cuda()
 
 model = vgg16(pretrained=True).to(args.device)
 
-show_summary(model)
+# show_summary(model) # what is this one?
+summary(model, (3, 224, 224))
 
 # save apoz pkl
 if not os.path.exists(args.apoz_path):
@@ -95,7 +97,7 @@ model.classifier[3] = linear_pre_mask(model.classifier[3], mask[1])
 torch.save({'cfg': ['Conv 5-3', 'FC 6'],
             'mask': mask,
             'state_dict': model.state_dict()},
-             args.save_path)
+           args.save_path)
 
 # valid
 acc_top1, acc_top5 = valid(model, valid_loader, criterion)
