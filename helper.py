@@ -38,7 +38,7 @@ def accuracy(output, target, topk=(1,)):
     return res
 
 
-def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu'):
+def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu', log_msg = False):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -73,16 +73,17 @@ def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu'):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        print(f'{epoch_log} \n'
-              f'Iter: [{i}/{train_iter}] \n'
-              f'Batch Time {batch_time.val:.3f} ({batch_time.avg:.3f}) \n'
-              f'Data {data_time.val:.3f} ({data_time.avg:.3f}) \n'
-              f'Loss {losses.val:.4f} ({losses.avg:.4f}) \n'
-              f'Prec@1 {top1.val:.3f} ({top1.avg:.3f}) \n'
-              f'Prec@5 {top5.val:.3f} ({top5.avg:.3f}) \n')
+        if log_msg:
+            print(f'{epoch_log} \n'
+                  f'Iter: [{i}/{train_iter}] \n'
+                  f'Batch Time {batch_time.val:.3f} ({batch_time.avg:.3f}) \n'
+                  f'Data {data_time.val:.3f} ({data_time.avg:.3f}) \n'
+                  f'Loss {losses.val:.4f} ({losses.avg:.4f}) \n'
+                  f'Prec@1 {top1.val:.3f} ({top1.avg:.3f}) \n'
+                  f'Prec@5 {top5.val:.3f} ({top5.avg:.3f}) \n')
 
 
-def valid(model, valid_loader, criterion, device='cpu'):
+def valid(model, valid_loader, criterion, device='cpu',log_msg = False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
@@ -93,6 +94,8 @@ def valid(model, valid_loader, criterion, device='cpu'):
     valid_iter = len(valid_loader)
 
     for i, (images, labels) in enumerate(valid_loader):
+        if i>3:
+            break
 
         images = images.to(device)
         labels = labels.to(device)
@@ -108,13 +111,14 @@ def valid(model, valid_loader, criterion, device='cpu'):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        print(f'Iter: [{i}/{valid_iter}]\n'
-              f'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\n'
-              f'Loss {losses.val:.4f} ({losses.avg:.4f})\n'
-              f'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\n'
-              f'Prec@5 {top5.val:.3f} ({top5.avg:.3f})\n')
+        if log_msg:
+            print(f'Iter: [{i}/{valid_iter}]\n'
+                  f'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\n'
+                  f'Loss {losses.val:.4f} ({losses.avg:.4f})\n'
+                  f'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\n'
+                  f'Prec@5 {top5.val:.3f} ({top5.avg:.3f})\n')
 
-    print(f' * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f} \n')
+    print(f' Validation * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f} \n')
 
     return top1.avg, top5.avg
 

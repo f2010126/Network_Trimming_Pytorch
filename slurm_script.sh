@@ -18,8 +18,12 @@ python3 -c "import torch; print(torch.cuda.is_available())"
 
 # run code here. full train.
 echo "Starting full training for VGG16"
-python3 -m train_vgg16_cifar10 --epoch 30
+python3 -m train_vgg16_cifar10 --epoch 20
 
-# echo "Prune VGG16"
+echo "Prune VGG16"
+ python3 -m trim_vgg_cifar10
+
+# echo "Fine tune VGG16"
+
 
 deactivate

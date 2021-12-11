@@ -18,7 +18,7 @@ class APoZ:
             self.apoz.append([0] * c)
             self.num_layer += 1
 
-        self.apoz = np.array(self.apoz)
+        self.apoz = np.array(self.apoz,dtype=object)
 
         self.register()
 
@@ -48,10 +48,11 @@ class APoZ:
             if type(module) == nn.ReLU:
                 module.register_forward_hook(self.get_zero_percent_hook)
 
-    def get_apoz(self, loader, criterion):
+    def get_apoz(self, loader, criterion,device='cpu'):
         top1, top5 = valid(self.model,
                            loader,
-                           criterion)
+                           criterion,
+                           device)
 
         print(f"top1 : {top1} top5 : {top5}")
 

@@ -2,7 +2,7 @@ import torch
 import copy
 
 
-def conv_mask(conv, in_mask, out_mask, device='cuda'):
+def conv_mask(conv, in_mask, out_mask, device='cpu'):
     """
     :param conv: original conv layer
     :param in_mask: boolean mask
@@ -31,7 +31,7 @@ def conv_mask(conv, in_mask, out_mask, device='cuda'):
     return new_conv
 
 
-def conv_pre_mask(conv, mask, device='cuda'):
+def conv_pre_mask(conv, mask, device='cpu'):
     """
     :param conv: original conv layer
     :param mask: boolean mask
@@ -56,7 +56,7 @@ def conv_pre_mask(conv, mask, device='cuda'):
     return new_conv
 
 
-def conv_post_mask(conv, mask, device='cuda'):
+def conv_post_mask(conv, mask, device='cpu'):
     """
     :param conv: original conv layer
     :param mask: boolean mask
@@ -97,11 +97,12 @@ def bn2d_mask(bn, mask):
     return new_bn
 
 
-def linear_mask(linear, in_mask, out_mask, last_feature=(7, 7), device='cuda'):
+def linear_mask(linear, in_mask, out_mask, last_feature=(7, 7), device='cpu'):
     """
     :param linear: original linear layer
     :param in_mask: boolean mask (conv)
     :param out_mask: boolean mask (linear)
+    :last_feature: last pooling 7x7 for vgg before classifier
     :param device: cuda / cpu
     :return:
     """
@@ -127,7 +128,7 @@ def linear_mask(linear, in_mask, out_mask, last_feature=(7, 7), device='cuda'):
     return new_linear
 
 
-def linear_pre_mask(linear, mask, device='cuda'):
+def linear_pre_mask(linear, mask, device='cpu'):
     """
         :param linear: original linear layer
         :param mask: boolean mask (linear)
@@ -148,7 +149,7 @@ def linear_pre_mask(linear, mask, device='cuda'):
     return new_linear
 
 
-def linear_post_mask(linear, mask, device='cuda'):
+def linear_post_mask(linear, mask, device='cpu'):
     """
     :param linear: original linear layer
     :param mask: boolean mask (linear)
