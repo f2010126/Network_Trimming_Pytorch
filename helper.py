@@ -1,11 +1,10 @@
 import time
 import pickle
-import logging
-import torch
 
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""
+
     def __init__(self):
         self.reset()
 
@@ -22,7 +21,7 @@ class AverageMeter(object):
         self.avg = self.sum / self.count
 
 
-def accuracy(output, target, topk=(1, )):
+def accuracy(output, target, topk=(1,)):
     maxk = max(topk)
     batch_size = target.size(0)
 
@@ -33,13 +32,13 @@ def accuracy(output, target, topk=(1, )):
     res = []
 
     for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+        correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
         res.append(correct_k.mul_(100.0 / batch_size))
 
     return res
 
 
-def train(model, train_loader, criterion, optimizer, epoch_log):
+def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu'):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -47,27 +46,24 @@ def train(model, train_loader, criterion, optimizer, epoch_log):
     top5 = AverageMeter()
 
     model.train()
-
     end = time.time()
-
     train_iter = len(train_loader)
 
-    for i, (input, target) in enumerate(train_loader):
+    for i, (images, labels) in enumerate(train_loader):
+
         data_time.update(time.time() - end)
 
-        input = input.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
-        input_var = torch.autograd.Variable(input, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)
+        images = images.to(device)
+        labels = labels.to(device)
 
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        logits = model(images)
+        loss = criterion(logits, labels)
 
-        prec1, prec5 = accuracy(output.data, target, topk=(1, 5))
+        prec1, prec5 = accuracy(logits.data, labels, topk=(1, 5))
 
-        losses.update(loss.data, input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top5.update(prec5[0], input.size(0))
+        losses.update(loss.data, images.size(0))
+        top1.update(prec1[0], images.size(0))
+        top5.update(prec5[0], images.size(0))
 
         optimizer.zero_grad()
         loss.backward()
@@ -79,39 +75,34 @@ def train(model, train_loader, criterion, optimizer, epoch_log):
 
         print(f'{epoch_log} \n'
               f'Iter: [{i}/{train_iter}] \n'
-              f'Time {batch_time.val:.3f} ({batch_time.avg:.3f}) \n'
+              f'Batch Time {batch_time.val:.3f} ({batch_time.avg:.3f}) \n'
               f'Data {data_time.val:.3f} ({data_time.avg:.3f}) \n'
               f'Loss {losses.val:.4f} ({losses.avg:.4f}) \n'
               f'Prec@1 {top1.val:.3f} ({top1.avg:.3f}) \n'
               f'Prec@5 {top5.val:.3f} ({top5.avg:.3f}) \n')
 
 
-def valid(model, valid_loader, criterion):
+def valid(model, valid_loader, criterion, device='cpu'):
     batch_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
     top5 = AverageMeter()
 
     model.eval()
-
     end = time.time()
-
     valid_iter = len(valid_loader)
 
-    for i, (input, target) in enumerate(valid_loader):
-        input = input.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
-        input_var = torch.autograd.Variable(input, volatile=True)
-        target_var = torch.autograd.Variable(target, volatile=True)
+    for i, (images, labels) in enumerate(valid_loader):
 
-        output = model(input_var)
-        loss = criterion(output, target_var)
+        images = images.to(device)
+        labels = labels.to(device)
+        output = model(images)
+        loss = criterion(output, labels)
+        prec1, prec5 = accuracy(output.data, labels, topk=(1, 5))
 
-        prec1, prec5 = accuracy(output.data, target, topk=(1, 5))
-
-        losses.update(loss.data, input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top5.update(prec5[0], input.size(0))
+        losses.update(loss.data, images.size(0))
+        top1.update(prec1[0], images.size(0))
+        top5.update(prec5[0], images.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
