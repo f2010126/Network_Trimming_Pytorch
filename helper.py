@@ -38,7 +38,7 @@ def accuracy(output, target, topk=(1,)):
     return res
 
 
-def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu', log_msg = False):
+def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu', log_msg=False):
     batch_time = AverageMeter()
     data_time = AverageMeter()
     losses = AverageMeter()
@@ -83,7 +83,7 @@ def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu', lo
                   f'Prec@5 {top5.val:.3f} ({top5.avg:.3f}) \n')
 
 
-def valid(model, valid_loader, criterion, device='cpu',log_msg = False):
+def valid(model, valid_loader, criterion, device='cpu', log_msg=False):
     batch_time = AverageMeter()
     losses = AverageMeter()
     top1 = AverageMeter()
@@ -94,8 +94,6 @@ def valid(model, valid_loader, criterion, device='cpu',log_msg = False):
     valid_iter = len(valid_loader)
 
     for i, (images, labels) in enumerate(valid_loader):
-        if i>3:
-            break
 
         images = images.to(device)
         labels = labels.to(device)

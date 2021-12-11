@@ -71,7 +71,7 @@ if __name__ == '__main__':
     print(f"Training VGG16 with {args}")
     train_loader, valid_loader, test_loader = load_cifar10_data()
 
-    model = vgg16(pretrained=True).to(device)
+    model = vgg16(pretrained=False, n_class=10).to(device)
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.SGD(model.parameters(),
                                 args.lr,

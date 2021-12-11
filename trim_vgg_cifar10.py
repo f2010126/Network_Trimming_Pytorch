@@ -24,7 +24,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
 
     # replace this by our model
     checkpoint = torch.load(args.load_path)
-    model = vgg16(pretrained=True).to(args.device)
+    model = vgg16(pretrained=False, n_class=10).to(args.device)
     model.load_state_dict(checkpoint['state_dict'])
 
     # show_summary(model) # what is this one?

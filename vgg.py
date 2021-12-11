@@ -73,11 +73,11 @@ feature_cfgs = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, '
 classifier_cfgs = [4096, 4096]
 
 
-def _vgg(arch, batch_norm, pretrained, progress, **kwargs):
+def _vgg(arch, batch_norm, pretrained, progress,n_class, **kwargs):
     if pretrained:
         kwargs['init_weights'] = False
 
-    model = VGG(make_layers(feature_cfgs, batch_norm=batch_norm), **kwargs)
+    model = VGG(make_layers(feature_cfgs, batch_norm=batch_norm),n_class, **kwargs)
 
     if pretrained:
         state_dict = model_zoo.load_url(model_urls[arch], progress=progress)
@@ -86,8 +86,8 @@ def _vgg(arch, batch_norm, pretrained, progress, **kwargs):
     return model
 
 
-def vgg16(pretrained=False, progress=True, **kwargs):
-    return _vgg('vgg16', False, pretrained, progress, **kwargs)
+def vgg16(pretrained=False, progress=True, n_class=1000, **kwargs):
+    return _vgg('vgg16', False, pretrained, progress,n_class, **kwargs)
 
 
 def vgg16_bn(pretrained=False, progress=True, **kwargs):
