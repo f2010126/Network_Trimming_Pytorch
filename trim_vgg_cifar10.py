@@ -31,7 +31,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
     summary(model, (3, 224, 224))
     # save apoz pkl or load a new one
     if not os.path.exists(args.apoz_path):
-        apoz = APoZ(model).get_apoz(valid_loader, criterion, device)
+        apoz = APoZ(model).get_apoz(valid_loader, criterion, args.device)
         save_pkl(apoz, args.apoz_path)
 
     else:
@@ -50,11 +50,11 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
         mask.append(sorted_arg < select_rate[i])
 
     # Conv 5-3 [output]
-    model.features[-3] = conv_post_mask(model.features[-3], mask[0], device)
+    model.features[-3] = conv_post_mask(model.features[-3], mask[0], args.device)
     # FC 6 [input, output]
-    model.classifier[0] = linear_mask(model.classifier[0], mask[0], mask[1], device=device)
+    model.classifier[0] = linear_mask(model.classifier[0], mask[0], mask[1], device=args.device)
     # FC 7 [input]
-    model.classifier[3] = linear_pre_mask(model.classifier[3], mask[1], device=device)
+    model.classifier[3] = linear_pre_mask(model.classifier[3], mask[1], device=args.device)
 
     # display the pruned model
     summary(model, (3, 224, 224))
@@ -65,7 +65,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
                f"{itr}_{args.save_model}.pth")
 
     # valid
-    acc_top1, acc_top5 = valid(model, valid_loader, criterion)
+    acc_top1, acc_top5 = valid(model, valid_loader, criterion, args.device)
 
     print(f"Post Trimming Validation \n"
           f"Acc@1: {acc_top1} \n"
