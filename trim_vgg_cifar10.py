@@ -24,7 +24,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
     model.load_state_dict(checkpoint['state_dict'])
 
     # show_summary(model) # what is this one?
-    summary(model, (3, 224, 224))
+    summary(model, (3, 32, 32))
     # save apoz pkl or load a new one
     if not os.path.exists(args.apoz_path):
         apoz = APoZ(model).get_apoz(valid_loader, criterion, args.device)
@@ -53,7 +53,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
     model.classifier[3] = linear_pre_mask(model.classifier[3], mask[1], device=args.device)
 
     # display the pruned model
-    summary(model, (3, 224, 224))
+    summary(model, (3, 32, 32))
     # save the pruned model
     torch.save({'cfg': ['Conv 5-3', 'FC 6'],
                 'mask': mask,

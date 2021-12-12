@@ -34,7 +34,7 @@ if __name__ == '__main__':
                                 weight_decay=1e-4)
 
     # show_summary(model) # what is this one?
-    summary(model, (3, 224, 224))
+    summary(model, (3, 32, 32))
 
     best_top1 = 0
 
