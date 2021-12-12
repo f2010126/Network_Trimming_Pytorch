@@ -67,7 +67,8 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
     # valid
     acc_top1, acc_top5 = valid(model, valid_loader, criterion)
 
-    print(f"Acc@1: {acc_top1} \n"
+    print(f"Post Trimming Validation \n"
+          f"Acc@1: {acc_top1} \n"
           f"Acc@5: {acc_top5} \n")
 
     end = time.time()
@@ -81,7 +82,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Cifar10 VGG Network Trimming')
     parser.add_argument('--load_path', '-l', type=str,
                         help='Path to load fully pretrained model',
-                        default='vgg16_full_train_model.pth')
+                        default='best_vgg16_full_train_model.pth')
     parser.add_argument('--save_model', type=str, default='apoz_vgg_cifar_model',
                         help='Path to save final apoz model')
     parser.add_argument('--apoz_path', type=str, default='vgg_apoz_fc.pkl',

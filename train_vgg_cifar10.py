@@ -63,11 +63,10 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--epoch', type=int, default=1)
     args = parser.parse_args()
-
-    # gives the loaders
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     args.device = device
     # of training hyperparameters in experiments: {base-lr: 0.001, gamma: 0.1, step-size: 3000}
+    # gives the loaders
     print(f"Training VGG16 with {args}")
     train_loader, valid_loader, test_loader = load_cifar10_data()
 
@@ -95,7 +94,7 @@ if __name__ == '__main__':
                            criterion,
                            device)
 
-        print(f"top1 : {top1} / top5 : {top5}")
+        print(f"EPOCH {e + 1}/{args.epoch} top1 : {top1} / top5 : {top5}")
 
         if top1 > best_top1:
             best_top1 = top1
@@ -103,9 +102,17 @@ if __name__ == '__main__':
             torch.save({'state_dict': model.state_dict()},
                        f"best_{args.save_model}.pth")
 
-    # save model after training
-    torch.save({'state_dict': model.state_dict()},
-               f"{args.save_model}.pth")
+    # load and test with best model
+    checkpoint = torch.load(f"best_{args.save_model}.pth")
+    model = vgg16(pretrained=False, n_class=10).to(args.device)
+    model.load_state_dict(checkpoint['state_dict'])
+
+    top1, top5 = valid(model,
+                       test_loader,
+                       criterion,
+                       device)
+    print(f"Best Model on test set")
+    print(f"top1 : {top1} / top5 : {top5}")
 
     end = time.time()
     hours, rem = divmod(end - start, 3600)
