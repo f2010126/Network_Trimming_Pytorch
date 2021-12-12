@@ -86,7 +86,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     args.device = device
-    print(f"Pruning VGG16 with Cifar10 with {args}")
+    print(f"Trimming VGG16 with Cifar10 with {args}")
 
     rate = [(488, 3477),
             (451, 2937),

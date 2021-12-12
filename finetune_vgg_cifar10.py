@@ -16,7 +16,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 def setup_trimmed_model(model_name, device):
     # load model, trim acc to mask and return the model and mask used
     checkpoint = torch.load(model_name)
-    trim_model = vgg16(pretrained=False, n_class=10).to(device)
+    trim_model = vgg16(pretrained=False, n_class=10)
     trim_mask = checkpoint['mask']
     # New layers being added to default model as per the apoz trimming
     # Conv 5-3 [output]
@@ -26,6 +26,8 @@ def setup_trimmed_model(model_name, device):
     # FC 7 [input]
     trim_model.classifier[3] = linear_pre_mask(trim_model.classifier[3], trim_mask[1])
     trim_model.load_state_dict(copy.deepcopy(checkpoint['state_dict']))
+    # put on device after everything
+    trim_model = trim_model.to(device)
 
     return trim_model, trim_mask
 

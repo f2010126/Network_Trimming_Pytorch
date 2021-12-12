@@ -3,6 +3,7 @@ import pickle
 import torch
 from torchvision import datasets, transforms
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
 
@@ -37,6 +38,12 @@ def accuracy(output, target, topk=(1,)):
         res.append(correct_k.mul_(100.0 / batch_size))
 
     return res
+
+
+def clear_cache():
+    with torch.no_grad():
+        torch.cuda.empty_cache()
+
 
 def load_cifar10_data(batch=60):
     """
@@ -78,6 +85,7 @@ def load_cifar10_data(batch=60):
     loader_test = torch.utils.data.DataLoader(test_dataset, batch_size=batch,
                                               shuffle=False, num_workers=2)
     return loader_train, val_loader, loader_test
+
 
 def train(model, train_loader, criterion, optimizer, epoch_log, device='cpu', log_msg=False):
     batch_time = AverageMeter()

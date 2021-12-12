@@ -24,7 +24,7 @@ echo "Prune VGG16"
 python3 -m trim_vgg_cifar10
 
 echo "Fine tune VGG16"
-python3 -m finetune_vgg_cifar10 --epochs 10 --batch_size 128 --lr 0.001
+python3 -m finetune_vgg_cifar10 --epoch 10 --batch_size 128 --lr 0.001
 
 
 deactivate
