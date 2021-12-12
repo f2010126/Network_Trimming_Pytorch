@@ -99,10 +99,10 @@ def bn2d_mask(bn, mask):
 
 def linear_mask(linear, in_mask, out_mask, last_feature=(7, 7), device='cpu'):
     """
+    :param last_feature: last pooling 7x7 for vgg before classifier
     :param linear: original linear layer
     :param in_mask: boolean mask (conv)
     :param out_mask: boolean mask (linear)
-    :last_feature: last pooling 7x7 for vgg before classifier
     :param device: cuda / cpu
     :return:
     """

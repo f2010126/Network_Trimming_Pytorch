@@ -1,12 +1,9 @@
 import os
-import sys
 import time
 import torch
 import argparse
 import numpy as np
 import torch.nn as nn
-from torchvision import datasets
-from torchvision import transforms
 from vgg import vgg16
 from apoz import APoZ
 from helper import save_pkl, load_pkl, valid, load_cifar10_data
@@ -17,7 +14,6 @@ from torchsummary import summary
 def trim_network(args, valid_loader, criterion, select_rate, itr):
     #
     start = time.time()
-
     module_name = ['Conv 1-1', 'Conv 1-2', 'Conv 2-1', 'Conv 2-2', 'Conv 3-1',
                    'Conv 3-2', 'Conv 3-3', 'Conv 4-1', 'Conv 4-2', 'Conv 4-3',
                    'Conv 5-1', 'Conv 5-2', 'Conv 5-3', 'FC 6', 'FC 7']
@@ -44,7 +40,7 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
 
     # Masking
     mask = []
-    # mask here
+    # mask here, ie see what neurons to prune
     for i, p in enumerate(apoz[-3:-1]):
         sorted_arg = np.argsort(p)
         mask.append(sorted_arg < select_rate[i])
@@ -66,15 +62,13 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
 
     # valid
     acc_top1, acc_top5 = valid(model, valid_loader, criterion, args.device)
-
-    print(f"Post Trimming Validation \n"
-          f"Acc@1: {acc_top1} \n"
-          f"Acc@5: {acc_top5} \n")
-
     end = time.time()
     hours, rem = divmod(end - start, 3600)
     minutes, seconds = divmod(rem, 60)
-    print("{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+    print(f"Post Trimming Validation for rate {itr} \n"
+          f"Acc@1: {acc_top1} \n"
+          f"Acc@5: {acc_top5} \n Completed Trimming in "
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
 
 if __name__ == '__main__':

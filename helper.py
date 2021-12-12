@@ -157,8 +157,6 @@ def valid(model, valid_loader, criterion, device='cpu', log_msg=False):
                   f'Prec@1 {top1.val:.3f} ({top1.avg:.3f})\n'
                   f'Prec@5 {top5.val:.3f} ({top5.avg:.3f})\n')
 
-    print(f' Validation * Prec@1 {top1.avg:.3f} Prec@5 {top5.avg:.3f} \n')
-
     return top1.avg, top5.avg
 
 

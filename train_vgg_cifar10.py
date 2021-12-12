@@ -10,7 +10,6 @@ from torchsummary import summary
 
 if __name__ == '__main__':
     start = time.time()
-
     parser = argparse.ArgumentParser(description='Full training the VGG16 for Cifar10')
     parser.add_argument('--data_path', type=str, default='./',
                         help='Path to root dataset folder ')
@@ -69,10 +68,10 @@ if __name__ == '__main__':
                        test_loader,
                        criterion,
                        device)
-    print(f"Best Model on test set")
-    print(f"top1 : {top1} / top5 : {top5}")
 
     end = time.time()
     hours, rem = divmod(end - start, 3600)
     minutes, seconds = divmod(rem, 60)
-    print("{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+    print(f"Best Model on test set " 
+          f"top1 : {top1} / top5 : {top5} \n Training completed in"
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
