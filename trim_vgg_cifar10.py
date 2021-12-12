@@ -9,7 +9,7 @@ from torchvision import datasets
 from torchvision import transforms
 from vgg import vgg16
 from apoz import APoZ
-from helper import save_pkl, load_pkl, valid
+from helper import save_pkl, load_pkl, valid, load_cifar10_data
 from converter import conv_post_mask, linear_mask, linear_pre_mask
 from torchsummary import summary
 
@@ -102,32 +102,8 @@ if __name__ == '__main__':
             (390, 1513)]
 
     # train/valid dataset
-    val_transform = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225])
-    ])
-
-    train_transform = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-    cifar_dataset = datasets.CIFAR10('data',
-                                     download=True,
-                                     train=True,
-                                     transform=train_transform, )
-
-    train_set, val_set = torch.utils.data.random_split(cifar_dataset, [45000, 5000])
-
-    valid_loader = torch.utils.data.DataLoader(val_set,
-                                               batch_size=args.batch_size,
-                                               pin_memory=True)
+    _, loader_valid, _ = load_cifar10_data(batch=128)
 
     criterion = nn.CrossEntropyLoss().to(device)
-    for i, one_rate in enumerate(rate):
-        trim_network(args, valid_loader, criterion, one_rate, i)
+    for ctr, one_rate in enumerate(rate):
+        trim_network(args, loader_valid, criterion, one_rate, ctr)

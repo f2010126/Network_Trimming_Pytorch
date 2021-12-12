@@ -1,53 +1,11 @@
-from torchvision import datasets, transforms
+
 import time
 import torch
 import argparse
 import torch.nn as nn
 from vgg import vgg16
-from helper import valid, train
+from helper import valid, train, load_cifar10_data
 from torchsummary import summary
-
-
-def load_cifar10_data(batch=60):
-    """
-    Load cifar10 data
-    :param batch:
-    :return: loaders for train, validation and test
-    """
-    val_transform = transforms.Compose([
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-    test_transform = transforms.Compose([
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-    train_transform = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
-    cifar_dataset = datasets.CIFAR10('data',
-                                     download=True,
-                                     train=True,
-                                     transform=train_transform, )
-    test_dataset = datasets.CIFAR10(
-        root='data', train=False,
-        download=True, transform=test_transform,
-    )
-    train_set, val_set = torch.utils.data.random_split(cifar_dataset, [45000, 5000])
-    loader_train = torch.utils.data.DataLoader(train_set, batch_size=batch,
-                                               shuffle=True, num_workers=2)
-    val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch,
-                                             shuffle=False, num_workers=2)
-
-    loader_test = torch.utils.data.DataLoader(test_dataset, batch_size=batch,
-                                              shuffle=False, num_workers=2)
-    return loader_train, val_loader, loader_test
 
 
 if __name__ == '__main__':
@@ -59,7 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_model', type=str, default='vgg16_full_train_model',
                         help='Path to model save')
 
-    parser.add_argument('--batch_size', type=int, default=50)
+    parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--epoch', type=int, default=1)
     args = parser.parse_args()
@@ -68,7 +26,7 @@ if __name__ == '__main__':
     # of training hyperparameters in experiments: {base-lr: 0.001, gamma: 0.1, step-size: 3000}
     # gives the loaders
     print(f"Training VGG16 with {args}")
-    train_loader, valid_loader, test_loader = load_cifar10_data()
+    train_loader, valid_loader, test_loader = load_cifar10_data(batch=args.batch_size)
 
     model = vgg16(pretrained=False, n_class=10).to(device)
     criterion = nn.CrossEntropyLoss().to(device)
