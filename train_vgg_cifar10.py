@@ -59,11 +59,16 @@ if __name__ == '__main__':
             torch.save({'state_dict': model.state_dict()},
                        f"best_{args.save_model}.pth")
 
+    end = time.time()
+    hours, rem = divmod(end - start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print(f"Training completed in "
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
     # load and test with best model
     checkpoint = torch.load(f"best_{args.save_model}.pth")
     model = vgg16(pretrained=False, n_class=10).to(args.device)
     model.load_state_dict(checkpoint['state_dict'])
-
+    start = time.time()
     top1, top5 = valid(model,
                        test_loader,
                        criterion,
@@ -73,5 +78,5 @@ if __name__ == '__main__':
     hours, rem = divmod(end - start, 3600)
     minutes, seconds = divmod(rem, 60)
     print(f"Best Model on test set " 
-          f"top1 : {top1} / top5 : {top5} \n Training completed in"
+          f"top1 : {top1} / top5 : {top5} \n Inference completed in"
           "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))

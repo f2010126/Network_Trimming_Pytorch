@@ -18,7 +18,7 @@ python3 -c "import torch; print(torch.cuda.is_available())"
 
 # run code here. full train.
 echo "Starting full training for VGG16"
-python3 -m train_vgg_cifar10 --epoch 200 --batch-size 128
+python3 -m train_vgg_cifar10 --epoch 200 --batch_size 128
 
 echo "Prune VGG16"
 python3 -m trim_vgg_cifar10
