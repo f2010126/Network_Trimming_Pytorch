@@ -27,8 +27,10 @@ def trim_network(args, valid_loader, criterion, select_rate, itr):
     summary(model, (3, 32, 32))
     # save apoz pkl or load a new one
     if not os.path.exists(args.apoz_path):
-        apoz = APoZ(model).get_apoz(valid_loader, criterion, args.device)
+        apoz_obj =APoZ(model)
+        apoz = apoz_obj.get_apoz(valid_loader, criterion, args.device)
         save_pkl(apoz, args.apoz_path)
+        apoz_obj.deregister()
 
     else:
         apoz = load_pkl(args.apoz_path)
